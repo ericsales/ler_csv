@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //Funçoes
 
 
 int main(){
 	//Inicialização
-//	FILE *arquivo_csv = fopen("/home/ericsales/Downloads/teste.csv", "r");	//abrindo o aquivo
-	char linha[8048];							//Vetor que armazenara a linha do aquivo
-	int i = 0, j = 0;							//Contador de laço
+	char linha[4048];							//Vetor que armazenara a linha do aquivo
+	int i = 0, j = 0, indiceUltimoCaractere;				//Contador de laço
 	FILE *arquivo_csv = fopen("/media/ericsales/Acer/Users/eric-/OneDrive/Área de Trabalho/Sally/IBC-SPSS/DADOS/DM_ALUNO.CSV", "r");	
 	FILE *arquivo_sql = fopen("teste.sql", "w");
 	
@@ -19,47 +19,90 @@ int main(){
 		return 1;
 	}
 
-	/*
-	while(fgets(linha, sizeof(linha), arquivo_csv) != NULL){
-		//fscanf(aquivo, "%c", vet[i])
-		printf("%s", linha);
-		i++;
-	}
-	*/
-
 	//lendo a primeira linha do arquivo_csv
 	fgets(linha, sizeof(linha), arquivo_csv);
-	
+
+	//Retirando \n do final da string	
+	indiceUltimoCaractere = strlen(linha) - 1;
+	if(linha[indiceUltimoCaractere] == '\n'){
+		linha[indiceUltimoCaractere - 1] = ';';
+	}
+
 	//Armazenhando
+	fprintf(arquivo_sql, "INSERT INTO IC (\'");
 	while(linha[j] != '\0'){
-		if(linha[j] != '|'){
-			printf("%c", linha[j]);
-		}else{
-			printf("\n");
-		}
-		j++;
+			if(linha[j] != '|' && linha[j] != ';'){
+				fprintf(arquivo_sql, "%c", linha[j]);
+			}else{ 
+				if(linha[j] != ';'){
+					fprintf(arquivo_sql, "\', \'");
+				}else{
+					fprintf(arquivo_sql, "\')");
+				}
+			}
+			j++;
 	}
 	j = 0;
 
-
-	while(i <= 3){
+	/*
+	while(fgets(linha, sizeof(linha), arquivo_csv) != NULL){
 		//leitura das linhas do arquivo_csv
 		fgets(linha, sizeof(linha), arquivo_csv);
-		
+
+		//
+		int indiceUltimoCaractere = strlen(linha) - 1;
+		if(linha[indiceUltimoCaractere] == '\n'){
+			linha[indiceUltimoCaractere - 1] = ';';
+		}
+
 		//Armazenhando
-		printf("INSERT INTO IC (CAMPOS)VALUES("VALORES")");
+		fprintf(arquivo_sql, "VALUES(\'");
 		while(linha[j] != '\0'){
-			if(linha[j] != '|'){
-				printf("%c", linha[j]);
-			}else{
-				printf("\n");
+			if(linha[j] != '|' && linha[j] != ';'){
+				fprintf(arquivo_sql, "%c", linha[j]);
+			}else{ 
+				if(linha[j] != ';'){
+					fprintf(arquivo_sql, "\', \'");
+				}else{
+					fprintf(arquivo_sql, "\')");
+				}
 			}
 			j++;
 		}
 		j = 0;	//Zerando contador
+	}
+	*/
+
+	while(i <= 100){
+		//leitura das linhas do arquivo_csv
+		fgets(linha, sizeof(linha), arquivo_csv);
+
+		//
+		indiceUltimoCaractere = strlen(linha) - 1;
+		if(linha[indiceUltimoCaractere] == '\n'){
+			linha[indiceUltimoCaractere - 1] = ';';
+		}
+
+		//Armazenhando
+		fprintf(arquivo_sql, "VALUES(\'");
+		while(linha[j] != '\0'){
+			if(linha[j] != '|' && linha[j] != ';'){
+				fprintf(arquivo_sql, "%c", linha[j]);
+			}else{ 
+				if(linha[j] != ';'){
+					fprintf(arquivo_sql, "\', \'");
+				}else{
+					fprintf(arquivo_sql, "\')");
+				}
+			}
+			j++;
+		}
+
+		j = 0;	//Zerando contador
 
 		i++;
 	}
+
 
 	//fechando aquivo
 	fclose(arquivo_csv);
