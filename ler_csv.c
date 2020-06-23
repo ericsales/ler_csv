@@ -8,7 +8,7 @@
 int main(){
 	//Inicialização
 	char linha[4048];							//Vetor que armazenara a linha do aquivo
-	int i = 0, j = 0, indiceUltimoCaractere;				//Contador de laço
+	int i = 0, j = 0, indiceUltimoCaractere, contCols = 0;				//Contador de laço
 	FILE *arquivo_csv = fopen("/media/ericsales/Acer/Users/eric-/OneDrive/Área de Trabalho/Sally/IBC-SPSS/DADOS/DM_ALUNO.CSV", "r");	
 	FILE *arquivo_sql = fopen("teste.sql", "w");
 	
@@ -36,15 +36,19 @@ int main(){
 			}else{ 
 				if(linha[j] != ';'){
 					fprintf(arquivo_sql, "\', \'");
+					contCols++;
 				}else{
 					fprintf(arquivo_sql, "\')");
+					contCols++;
 				}
 			}
 			j++;
 	}
 	j = 0;
 
-	/*
+	printf("NUMERO DE COLUNAS: %d\n", contCols);
+
+	
 	while(fgets(linha, sizeof(linha), arquivo_csv) != NULL){
 		//leitura das linhas do arquivo_csv
 		fgets(linha, sizeof(linha), arquivo_csv);
@@ -71,8 +75,9 @@ int main(){
 		}
 		j = 0;	//Zerando contador
 	}
-	*/
+	
 
+/*
 	while(i <= 100){
 		//leitura das linhas do arquivo_csv
 		fgets(linha, sizeof(linha), arquivo_csv);
@@ -102,7 +107,7 @@ int main(){
 
 		i++;
 	}
-
+*/
 
 	//fechando aquivo
 	fclose(arquivo_csv);
