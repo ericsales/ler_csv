@@ -1,25 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "csv.h"
 
-//Funçoes
+int converte(char *caminho, int n_caminho){
+	//Inicializaçoes
+	int i = 0, j = 0;		//Contadores de laço
+	int indiceUltimoCaractere;	//Armazena a posicao do ultimo caracter da string
+	int contCols = 0;		//Contador de laço
+	char linha[2048];		//Buffer da linha
 
 
-int main(){
-	//Inicialização
-	char linha[4048], caminho[200];					//Vetor que armazenara a linha do aquivo
-	int i = 0, j = 0, indiceUltimoCaractere, contCols = 0;		//Contador de laço
-	
-	//Entrada de dados
-	printf("Insira o caminho do aquivo csv: ");
-	scanf("%s", caminho);
-	
-	FILE *arquivo_csv = fopen("/media/ericsales/Acer/Users/eric-/OneDrive/Área de Trabalho/Sally/IBC-SPSS/DADOS/DM_ALUNO.CSV", "r");	
-	FILE *arquivo_sql = fopen("teste.sql", "w");
-	
+	//Abertura de aquivos
+	FILE *arquivo_csv = fopen(caminho, "r");	//Arquivo CSV
+	FILE *arquivo_sql = fopen("dados.sql", "w");	//Arquivo SQL
+
 	//Verificar abertura de arquivo_csv
-	if(arquivo_csv == NULL || arquivo_sql == NULL)
-	{
+	if(arquivo_csv == NULL || arquivo_sql == NULL){
 		printf("Arquivo não encontrado\n");
 		return 1;
 	}
@@ -33,27 +27,25 @@ int main(){
 		linha[indiceUltimoCaractere - 1] = ';';
 	}
 
-	//Armazenhando
+	//Armazenhando a primeira linha que contem o nome das colunas
 	fprintf(arquivo_sql, "INSERT INTO IC (\'");
 	while(linha[j] != '\0'){
-			if(linha[j] != '|' && linha[j] != ';'){
-				fprintf(arquivo_sql, "%c", linha[j]);
-			}else{ 
-				if(linha[j] != ';'){
-					fprintf(arquivo_sql, "\', \'");
-					contCols++;
-				}else{
-					fprintf(arquivo_sql, "\')");
-					contCols++;
-				}
+		if(linha[j] != '|' && linha[j] != ';'){
+			fprintf(arquivo_sql, "%c", linha[j]);
+		}else{ 
+			if(linha[j] != ';'){
+				fprintf(arquivo_sql, "\', \'");
+				contCols++;
+			}else{
+				fprintf(arquivo_sql, "\')");
+				contCols++;
 			}
-			j++;
+		}
+		j++;
 	}
 	j = 0;
 
-	printf("NUMERO DE COLUNAS: %d\n", contCols);
-
-	
+	//Gravando dados no arquivo	
 	while(fgets(linha, sizeof(linha), arquivo_csv) != NULL){
 		//leitura das linhas do arquivo_csv
 		fgets(linha, sizeof(linha), arquivo_csv);
@@ -80,10 +72,10 @@ int main(){
 		}
 		j = 0;	//Zerando contador
 	}
-	
+
 	//fechando aquivo
 	fclose(arquivo_csv);
-	fclose(arquivo_sql);	
+	fclose(arquivo_sql);
 
 	return 0;
 }
